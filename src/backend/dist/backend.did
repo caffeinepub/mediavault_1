@@ -1,0 +1,101 @@
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type UploadResult = 
+ variant {
+   err: text;
+   ok: FileMetadata;
+ };
+type Timestamp = int;
+type StorageStats = 
+ record {
+   audioCount: nat;
+   documentCount: nat;
+   imageCount: nat;
+   totalBytes: nat;
+   totalFiles: nat;
+   videoCount: nat;
+ };
+type SortOrder = 
+ variant {
+   asc;
+   desc;
+ };
+type SortField = 
+ variant {
+   fileSize;
+   name;
+   uploadDate;
+ };
+type RenameResult = 
+ variant {
+   err: text;
+   ok: FileMetadata;
+ };
+type ListFilesResponse = 
+ record {
+   files: vec FileMetadata;
+   page: nat;
+   pageSize: nat;
+   totalCount: nat;
+ };
+type ListFilesRequest = 
+ record {
+   category: opt FileCategory;
+   page: nat;
+   pageSize: nat;
+   searchQuery: opt text;
+   sortField: SortField;
+   sortOrder: SortOrder;
+ };
+type FileMetadata = 
+ record {
+   category: FileCategory;
+   fileSize: nat;
+   id: FileId;
+   mimeType: text;
+   name: text;
+   uploadedAt: Timestamp;
+ };
+type FileId = text;
+type FileCategory = 
+ variant {
+   audio;
+   document;
+   image;
+   video;
+ };
+type ExternalBlob = blob;
+type DeleteResult = 
+ variant {
+   err: text;
+   ok;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  deleteFile: (fileId: FileId) -> (DeleteResult);
+  getFileMetadata: (fileId: FileId) -> (opt FileMetadata) query;
+  getStorageStats: () -> (StorageStats) query;
+  listFiles: (request: ListFilesRequest) -> (ListFilesResponse) query;
+  renameFile: (fileId: FileId, newName: text) -> (RenameResult);
+  uploadFile: (name: text, mimeType: text, fileSize: nat, "blob":
+   ExternalBlob) -> (UploadResult);
+}

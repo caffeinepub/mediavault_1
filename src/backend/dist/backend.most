@@ -1,0 +1,31 @@
+// Version: 1.0.0
+type ExternalBlob__246066408 = Blob;
+type FileCategory__29330529 = {#audio; #document; #image; #video};
+type FileId__283657257 = Text;
+type FileId__759704081 = FileId__283657257;
+type FileRecord__508655161 =
+  {
+    blob : ExternalBlob__246066408;
+    category : FileCategory__29330529;
+    fileSize : Nat;
+    id : FileId__759704081;
+    mimeType : Text;
+    name : Text;
+    ownerId : UserId__954450536;
+    uploadedAt : Timestamp__360306158
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Timestamp__301639476 = Int;
+type Timestamp__360306158 = Timestamp__301639476;
+type UserId__158757552 = Principal;
+type UserId__954450536 = UserId__158757552;
+actor {
+  stable var fileCounter : Nat;
+  stable files :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?FileRecord__508655161]];
+      var elementIndex : Nat__490723111
+    }
+};

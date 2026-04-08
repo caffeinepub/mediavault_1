@@ -1,0 +1,25 @@
+{
+  "overview": "A mobile-friendly media storage app where users can upload, organize, and manage multiple file formats (docs, images, videos, audio) from iPhone and Android devices with user authentication.",
+  "features": [
+    "Multi-format file upload (PDF, Word, PNG, JPEG, MP4, MOV, MP3, etc.)",
+    "Mobile-optimized upload UI for iPhone and Android",
+    "Media library with grid view and category filters",
+    "File preview for images, videos, and audio",
+    "Search and sort files by name, date, or size",
+    "User authentication via Internet Identity",
+    "File management: rename, delete, copy link",
+    "Storage usage meter"
+  ],
+  "category": "productivity",
+  "tags": [
+    "media",
+    "storage",
+    "upload",
+    "files",
+    "mobile",
+    "documents",
+    "images",
+    "videos"
+  ],
+  "last_updated": "2026-04-08T21:20:27.391Z"
+}
