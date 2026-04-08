@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
 import { FilePreview } from "../components/FilePreview";
+import { useFileBlob } from "../hooks/useFileBlob";
 import {
   useDeleteFile,
   useFileMetadata,
@@ -51,7 +52,7 @@ export function FileDetailPage({ fileId, onBack }: FileDetailPageProps) {
     if (isEditing) inputRef.current?.focus();
   }, [isEditing]);
 
-  const fileUrl = file ? `https://storage.ic0.app/${file.id}` : "";
+  const { blobUrl } = useFileBlob(file?.id ?? null, file?.mimeType ?? "");
 
   function handleCopyLink() {
     const url = `${window.location.origin}?file=${fileId}`;
@@ -61,11 +62,13 @@ export function FileDetailPage({ fileId, onBack }: FileDetailPageProps) {
   }
 
   function handleDownload() {
-    if (!file) return;
+    if (!file || !blobUrl) return;
     const a = document.createElement("a");
-    a.href = fileUrl;
+    a.href = blobUrl;
     a.download = file.name;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
   }
 
   async function handleRenameSubmit() {
@@ -260,7 +263,7 @@ export function FileDetailPage({ fileId, onBack }: FileDetailPageProps) {
             {/* Preview area */}
             <div className="w-full bg-muted/20 flex items-center justify-center p-4">
               <FilePreview
-                fileUrl={fileUrl}
+                fileId={file.id}
                 mimeType={file.mimeType}
                 fileName={file.name}
                 className="w-full max-h-[55vh] min-h-[220px]"

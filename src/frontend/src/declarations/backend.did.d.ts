@@ -89,6 +89,7 @@ export interface _SERVICE {
   >,
   '_immutableObjectStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   'deleteFile' : ActorMethod<[FileId], DeleteResult>,
+  'getFileBlob' : ActorMethod<[FileId], [] | [ExternalBlob]>,
   'getFileMetadata' : ActorMethod<[FileId], [] | [FileMetadata]>,
   'getStorageStats' : ActorMethod<[], StorageStats>,
   'listFiles' : ActorMethod<[ListFilesRequest], ListFilesResponse>,

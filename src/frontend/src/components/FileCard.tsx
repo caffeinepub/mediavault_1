@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Play } from "lucide-react";
+import { useFileBlob } from "../hooks/useFileBlob";
 import type { FileMetadata } from "../types";
 import {
   formatDate,
@@ -20,8 +21,12 @@ export function FileCard({ file, onClick }: FileCardProps) {
   const isImage = isImageFile(file.mimeType, file.name);
   const isVideo = isVideoFile(file.mimeType, file.name);
   const Icon = getFileIcon(file.mimeType, file.name);
-  const hasPreview = isImage || isVideo;
-  const fileUrl = hasPreview ? `/api/file/${file.id}` : null;
+
+  // Only load blob for images — videos and docs use icon fallback
+  const { blobUrl: thumbnailUrl, isLoading: thumbLoading } = useFileBlob(
+    isImage ? file.id : null,
+    file.mimeType,
+  );
 
   return (
     <button
@@ -36,33 +41,36 @@ export function FileCard({ file, onClick }: FileCardProps) {
     >
       {/* Thumbnail */}
       <div className="relative aspect-video w-full overflow-hidden bg-muted/50 flex items-center justify-center">
-        {hasPreview && fileUrl ? (
-          <>
-            {isImage ? (
-              <img
-                src={fileUrl}
-                alt={file.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                loading="lazy"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
-              />
-            ) : (
-              <div className="relative w-full h-full bg-muted flex items-center justify-center">
-                <Icon size={28} className="text-muted-foreground" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
-                    <Play
-                      size={16}
-                      className="text-foreground ml-0.5"
-                      fill="currentColor"
-                    />
-                  </div>
-                </div>
+        {isImage ? (
+          thumbLoading ? (
+            <Skeleton className="w-full h-full absolute inset-0 rounded-none" />
+          ) : thumbnailUrl ? (
+            <img
+              src={thumbnailUrl}
+              alt={file.name}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-2 py-6">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Icon size={24} className="text-primary" />
               </div>
-            )}
-          </>
+            </div>
+          )
+        ) : isVideo ? (
+          <div className="relative w-full h-full bg-muted flex items-center justify-center">
+            <Icon size={28} className="text-muted-foreground" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center shadow-sm">
+                <Play
+                  size={16}
+                  className="text-foreground ml-0.5"
+                  fill="currentColor"
+                />
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 py-6">
             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">

@@ -1,5 +1,5 @@
 import type { backendInterface, FileMetadata, StorageStats, ListFilesResponse, DeleteResult, UploadResult, RenameResult, _ImmutableObjectStorageCreateCertificateResult, _ImmutableObjectStorageRefillResult, _ImmutableObjectStorageRefillInformation } from "../backend";
-import { FileCategory, SortField, SortOrder } from "../backend";
+import { ExternalBlob, FileCategory, SortField, SortOrder } from "../backend";
 
 const sampleFiles: FileMetadata[] = [
   {
@@ -133,6 +133,11 @@ export const mockBackend: backendInterface = {
     const file = sampleFiles.find((f) => f.id === fileId);
     if (!file) return { __kind__: "err", err: "File not found" };
     return { __kind__: "ok", ok: { ...file, name: newName } };
+  },
+
+  getFileBlob: async (_fileId: string): Promise<ExternalBlob | null> => {
+    // Return null in mock — no real blob data available
+    return null;
   },
 
   _immutableObjectStorageBlobsAreLive: async (_hashes: Array<Uint8Array>): Promise<Array<boolean>> => [],

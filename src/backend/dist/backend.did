@@ -92,6 +92,7 @@ service : {
    (_ImmutableObjectStorageRefillResult);
   _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
   deleteFile: (fileId: FileId) -> (DeleteResult);
+  getFileBlob: (fileId: FileId) -> (opt ExternalBlob) query;
   getFileMetadata: (fileId: FileId) -> (opt FileMetadata) query;
   getStorageStats: () -> (StorageStats) query;
   listFiles: (request: ListFilesRequest) -> (ListFilesResponse) query;

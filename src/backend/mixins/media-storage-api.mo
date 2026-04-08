@@ -109,4 +109,14 @@ mixin (files : List.List<Types.FileRecord>) {
   public shared query ({ caller }) func getStorageStats() : async Types.StorageStats {
     MediaLib.getStorageStats(files, caller);
   };
+
+  /// Retrieve the raw blob for a file owned by the caller
+  public shared query ({ caller }) func getFileBlob(
+    fileId : Types.FileId,
+  ) : async ?Storage.ExternalBlob {
+    switch (files.find<Types.FileRecord>(func(f) { f.id == fileId and Principal.equal(f.ownerId, caller) })) {
+      case (?file) ?file.blob;
+      case null null;
+    };
+  };
 };

@@ -21,6 +21,7 @@ export const _ImmutableObjectStorageRefillResult = IDL.Record({
 });
 export const FileId = IDL.Text;
 export const DeleteResult = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const FileCategory = IDL.Variant({
   'audio' : IDL.Null,
   'video' : IDL.Null,
@@ -68,7 +69,6 @@ export const RenameResult = IDL.Variant({
   'ok' : FileMetadata,
   'err' : IDL.Text,
 });
-export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const UploadResult = IDL.Variant({
   'ok' : FileMetadata,
   'err' : IDL.Text,
@@ -102,6 +102,7 @@ export const idlService = IDL.Service({
     ),
   '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   'deleteFile' : IDL.Func([FileId], [DeleteResult], []),
+  'getFileBlob' : IDL.Func([FileId], [IDL.Opt(ExternalBlob)], ['query']),
   'getFileMetadata' : IDL.Func([FileId], [IDL.Opt(FileMetadata)], ['query']),
   'getStorageStats' : IDL.Func([], [StorageStats], ['query']),
   'listFiles' : IDL.Func([ListFilesRequest], [ListFilesResponse], ['query']),
@@ -129,6 +130,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const FileId = IDL.Text;
   const DeleteResult = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const FileCategory = IDL.Variant({
     'audio' : IDL.Null,
     'video' : IDL.Null,
@@ -173,7 +175,6 @@ export const idlFactory = ({ IDL }) => {
     'pageSize' : IDL.Nat,
   });
   const RenameResult = IDL.Variant({ 'ok' : FileMetadata, 'err' : IDL.Text });
-  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const UploadResult = IDL.Variant({ 'ok' : FileMetadata, 'err' : IDL.Text });
   
   return IDL.Service({
@@ -204,6 +205,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_immutableObjectStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     'deleteFile' : IDL.Func([FileId], [DeleteResult], []),
+    'getFileBlob' : IDL.Func([FileId], [IDL.Opt(ExternalBlob)], ['query']),
     'getFileMetadata' : IDL.Func([FileId], [IDL.Opt(FileMetadata)], ['query']),
     'getStorageStats' : IDL.Func([], [StorageStats], ['query']),
     'listFiles' : IDL.Func([ListFilesRequest], [ListFilesResponse], ['query']),

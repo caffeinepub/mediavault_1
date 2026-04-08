@@ -84,6 +84,7 @@ export enum SortOrder {
 }
 export interface backendInterface {
     deleteFile(fileId: FileId): Promise<DeleteResult>;
+    getFileBlob(fileId: FileId): Promise<ExternalBlob | null>;
     getFileMetadata(fileId: FileId): Promise<FileMetadata | null>;
     getStorageStats(): Promise<StorageStats>;
     listFiles(request: ListFilesRequest): Promise<ListFilesResponse>;

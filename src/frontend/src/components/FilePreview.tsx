@@ -1,4 +1,10 @@
-import { FileText, Headphones, Image as ImageIcon, Video } from "lucide-react";
+import {
+  FileText,
+  Headphones,
+  Image as ImageIcon,
+  Loader2,
+} from "lucide-react";
+import { useFileBlob } from "../hooks/useFileBlob";
 import { isImageFile, isVideoFile } from "../utils/fileUtils";
 
 function isAudioFile(mimeType: string, fileName: string): boolean {
@@ -11,31 +17,39 @@ function isAudioFile(mimeType: string, fileName: string): boolean {
 }
 
 interface FilePreviewProps {
-  fileUrl: string;
+  fileId: string;
   mimeType: string;
   fileName: string;
   className?: string;
 }
 
 export function FilePreview({
-  fileUrl,
+  fileId,
   mimeType,
   fileName,
   className = "",
 }: FilePreviewProps) {
+  const { blobUrl, isLoading } = useFileBlob(fileId, mimeType);
+
   if (isImageFile(mimeType, fileName)) {
     return (
       <div
         className={`relative flex items-center justify-center bg-muted/40 rounded-lg overflow-hidden ${className}`}
         data-ocid="file-preview-image"
       >
-        <img
-          src={fileUrl}
-          alt={fileName}
-          className="max-w-full max-h-full object-contain touch-manipulation select-none"
-          style={{ touchAction: "pinch-zoom" }}
-          draggable={false}
-        />
+        {isLoading || !blobUrl ? (
+          <div className="flex items-center justify-center w-full h-full min-h-[200px]">
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+          </div>
+        ) : (
+          <img
+            src={blobUrl}
+            alt={fileName}
+            className="max-w-full max-h-full object-contain touch-manipulation select-none"
+            style={{ touchAction: "pinch-zoom" }}
+            draggable={false}
+          />
+        )}
       </div>
     );
   }
@@ -46,14 +60,19 @@ export function FilePreview({
         className={`relative flex items-center justify-center bg-muted/60 rounded-lg overflow-hidden ${className}`}
         data-ocid="file-preview-video"
       >
-        {/* biome-ignore lint/a11y/useMediaCaption: user-uploaded video files may not have captions */}
-        <video
-          src={fileUrl}
-          controls
-          controlsList="nodownload"
-          playsInline
-          className="max-w-full max-h-full rounded-lg"
-        />
+        {isLoading || !blobUrl ? (
+          <div className="flex items-center justify-center w-full h-full min-h-[200px]">
+            <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
+          </div>
+        ) : (
+          // biome-ignore lint/a11y/useMediaCaption: user-uploaded video files may not have captions
+          <video
+            src={blobUrl}
+            controls
+            playsInline
+            className="max-w-full max-h-full rounded-lg"
+          />
+        )}
       </div>
     );
   }
@@ -70,8 +89,12 @@ export function FilePreview({
         <p className="text-sm font-medium text-foreground truncate max-w-[80%] text-center">
           {fileName}
         </p>
-        {/* biome-ignore lint/a11y/useMediaCaption: user-uploaded audio files */}
-        <audio src={fileUrl} controls className="w-full max-w-xs" />
+        {isLoading ? (
+          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+        ) : blobUrl ? (
+          // biome-ignore lint/a11y/useMediaCaption: user-uploaded audio files
+          <audio src={blobUrl} controls className="w-full max-w-xs" />
+        ) : null}
       </div>
     );
   }
@@ -90,16 +113,20 @@ export function FilePreview({
           <FileText className="w-9 h-9 text-primary" />
         </div>
         <p className="text-sm text-muted-foreground">PDF Document</p>
-        <a
-          href={fileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          download={fileName}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-          data-ocid="file-preview-download"
-        >
-          Open PDF
-        </a>
+        {isLoading ? (
+          <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+        ) : blobUrl ? (
+          <a
+            href={blobUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            download={fileName}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            data-ocid="file-preview-download"
+          >
+            Open PDF
+          </a>
+        ) : null}
       </div>
     );
   }
@@ -127,16 +154,18 @@ export function FilePreview({
       <p className="text-sm text-muted-foreground capitalize">
         {isDoc ? "Document" : "File"}
       </p>
-      <a
-        href={fileUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        download={fileName}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-        data-ocid="file-preview-download-generic"
-      >
-        Download file
-      </a>
+      {isLoading ? (
+        <Loader2 className="w-6 h-6 text-muted-foreground animate-spin" />
+      ) : blobUrl ? (
+        <a
+          href={blobUrl}
+          download={fileName}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+          data-ocid="file-preview-download-generic"
+        >
+          Download file
+        </a>
+      ) : null}
     </div>
   );
 }

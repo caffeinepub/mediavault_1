@@ -176,6 +176,7 @@ export interface backendInterface {
     _immutableObjectStorageRefillCashier(refillInformation: _ImmutableObjectStorageRefillInformation | null): Promise<_ImmutableObjectStorageRefillResult>;
     _immutableObjectStorageUpdateGatewayPrincipals(): Promise<void>;
     deleteFile(fileId: FileId): Promise<DeleteResult>;
+    getFileBlob(fileId: FileId): Promise<ExternalBlob | null>;
     getFileMetadata(fileId: FileId): Promise<FileMetadata | null>;
     getStorageStats(): Promise<StorageStats>;
     listFiles(request: ListFilesRequest): Promise<ListFilesResponse>;
@@ -283,18 +284,32 @@ export class Backend implements backendInterface {
             return from_candid_DeleteResult_n8(this._uploadFile, this._downloadFile, result);
         }
     }
-    async getFileMetadata(arg0: FileId): Promise<FileMetadata | null> {
+    async getFileBlob(arg0: FileId): Promise<ExternalBlob | null> {
         if (this.processError) {
             try {
-                const result = await this.actor.getFileMetadata(arg0);
+                const result = await this.actor.getFileBlob(arg0);
                 return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.getFileMetadata(arg0);
+            const result = await this.actor.getFileBlob(arg0);
             return from_candid_opt_n10(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getFileMetadata(arg0: FileId): Promise<FileMetadata | null> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getFileMetadata(arg0);
+                return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getFileMetadata(arg0);
+            return from_candid_opt_n12(this._uploadFile, this._downloadFile, result);
         }
     }
     async getStorageStats(): Promise<StorageStats> {
@@ -314,69 +329,75 @@ export class Backend implements backendInterface {
     async listFiles(arg0: ListFilesRequest): Promise<ListFilesResponse> {
         if (this.processError) {
             try {
-                const result = await this.actor.listFiles(to_candid_ListFilesRequest_n15(this._uploadFile, this._downloadFile, arg0));
-                return from_candid_ListFilesResponse_n23(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.listFiles(to_candid_ListFilesRequest_n17(this._uploadFile, this._downloadFile, arg0));
+                return from_candid_ListFilesResponse_n25(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.listFiles(to_candid_ListFilesRequest_n15(this._uploadFile, this._downloadFile, arg0));
-            return from_candid_ListFilesResponse_n23(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.listFiles(to_candid_ListFilesRequest_n17(this._uploadFile, this._downloadFile, arg0));
+            return from_candid_ListFilesResponse_n25(this._uploadFile, this._downloadFile, result);
         }
     }
     async renameFile(arg0: FileId, arg1: string): Promise<RenameResult> {
         if (this.processError) {
             try {
                 const result = await this.actor.renameFile(arg0, arg1);
-                return from_candid_RenameResult_n26(this._uploadFile, this._downloadFile, result);
+                return from_candid_RenameResult_n28(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.renameFile(arg0, arg1);
-            return from_candid_RenameResult_n26(this._uploadFile, this._downloadFile, result);
+            return from_candid_RenameResult_n28(this._uploadFile, this._downloadFile, result);
         }
     }
     async uploadFile(arg0: string, arg1: string, arg2: bigint, arg3: ExternalBlob): Promise<UploadResult> {
         if (this.processError) {
             try {
-                const result = await this.actor.uploadFile(arg0, arg1, arg2, await to_candid_ExternalBlob_n28(this._uploadFile, this._downloadFile, arg3));
-                return from_candid_UploadResult_n29(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.uploadFile(arg0, arg1, arg2, await to_candid_ExternalBlob_n30(this._uploadFile, this._downloadFile, arg3));
+                return from_candid_UploadResult_n31(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.uploadFile(arg0, arg1, arg2, await to_candid_ExternalBlob_n28(this._uploadFile, this._downloadFile, arg3));
-            return from_candid_UploadResult_n29(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.uploadFile(arg0, arg1, arg2, await to_candid_ExternalBlob_n30(this._uploadFile, this._downloadFile, arg3));
+            return from_candid_UploadResult_n31(this._uploadFile, this._downloadFile, result);
         }
     }
 }
 function from_candid_DeleteResult_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DeleteResult): DeleteResult {
     return from_candid_variant_n9(_uploadFile, _downloadFile, value);
 }
-function from_candid_FileCategory_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _FileCategory): FileCategory {
-    return from_candid_variant_n14(_uploadFile, _downloadFile, value);
+async function from_candid_ExternalBlob_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ExternalBlob): Promise<ExternalBlob> {
+    return await _downloadFile(value);
 }
-function from_candid_FileMetadata_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _FileMetadata): FileMetadata {
-    return from_candid_record_n12(_uploadFile, _downloadFile, value);
+function from_candid_FileCategory_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _FileCategory): FileCategory {
+    return from_candid_variant_n16(_uploadFile, _downloadFile, value);
 }
-function from_candid_ListFilesResponse_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ListFilesResponse): ListFilesResponse {
-    return from_candid_record_n24(_uploadFile, _downloadFile, value);
+function from_candid_FileMetadata_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _FileMetadata): FileMetadata {
+    return from_candid_record_n14(_uploadFile, _downloadFile, value);
 }
-function from_candid_RenameResult_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _RenameResult): RenameResult {
-    return from_candid_variant_n27(_uploadFile, _downloadFile, value);
+function from_candid_ListFilesResponse_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ListFilesResponse): ListFilesResponse {
+    return from_candid_record_n26(_uploadFile, _downloadFile, value);
 }
-function from_candid_UploadResult_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UploadResult): UploadResult {
-    return from_candid_variant_n27(_uploadFile, _downloadFile, value);
+function from_candid_RenameResult_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _RenameResult): RenameResult {
+    return from_candid_variant_n29(_uploadFile, _downloadFile, value);
+}
+function from_candid_UploadResult_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UploadResult): UploadResult {
+    return from_candid_variant_n29(_uploadFile, _downloadFile, value);
 }
 function from_candid__ImmutableObjectStorageRefillResult_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: __ImmutableObjectStorageRefillResult): _ImmutableObjectStorageRefillResult {
     return from_candid_record_n5(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_FileMetadata]): FileMetadata | null {
-    return value.length === 0 ? null : from_candid_FileMetadata_n11(_uploadFile, _downloadFile, value[0]);
+async function from_candid_opt_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_ExternalBlob]): Promise<ExternalBlob | null> {
+    return value.length === 0 ? null : await from_candid_ExternalBlob_n11(_uploadFile, _downloadFile, value[0]);
+}
+function from_candid_opt_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_FileMetadata]): FileMetadata | null {
+    return value.length === 0 ? null : from_candid_FileMetadata_n13(_uploadFile, _downloadFile, value[0]);
 }
 function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [boolean]): boolean | null {
     return value.length === 0 ? null : value[0];
@@ -384,7 +405,7 @@ function from_candid_opt_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
 function from_candid_opt_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: _FileId;
     name: string;
     mimeType: string;
@@ -404,11 +425,11 @@ function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uin
         name: value.name,
         mimeType: value.mimeType,
         fileSize: value.fileSize,
-        category: from_candid_FileCategory_n13(_uploadFile, _downloadFile, value.category),
+        category: from_candid_FileCategory_n15(_uploadFile, _downloadFile, value.category),
         uploadedAt: value.uploadedAt
     };
 }
-function from_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_record_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     files: Array<_FileMetadata>;
     page: bigint;
     totalCount: bigint;
@@ -420,7 +441,7 @@ function from_candid_record_n24(_uploadFile: (file: ExternalBlob) => Promise<Uin
     pageSize: bigint;
 } {
     return {
-        files: from_candid_vec_n25(_uploadFile, _downloadFile, value.files),
+        files: from_candid_vec_n27(_uploadFile, _downloadFile, value.files),
         page: value.page,
         totalCount: value.totalCount,
         pageSize: value.pageSize
@@ -438,7 +459,7 @@ function from_candid_record_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint
         topped_up_amount: record_opt_to_undefined(from_candid_opt_n7(_uploadFile, _downloadFile, value.topped_up_amount))
     };
 }
-function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     audio: null;
 } | {
     video: null;
@@ -449,7 +470,7 @@ function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): FileCategory {
     return "audio" in value ? FileCategory.audio : "video" in value ? FileCategory.video : "document" in value ? FileCategory.document : "image" in value ? FileCategory.image : value;
 }
-function from_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     ok: _FileMetadata;
 } | {
     err: string;
@@ -462,7 +483,7 @@ function from_candid_variant_n27(_uploadFile: (file: ExternalBlob) => Promise<Ui
 } {
     return "ok" in value ? {
         __kind__: "ok",
-        ok: from_candid_FileMetadata_n11(_uploadFile, _downloadFile, value.ok)
+        ok: from_candid_FileMetadata_n13(_uploadFile, _downloadFile, value.ok)
     } : "err" in value ? {
         __kind__: "err",
         err: value.err
@@ -487,23 +508,23 @@ function from_candid_variant_n9(_uploadFile: (file: ExternalBlob) => Promise<Uin
         err: value.err
     } : value;
 }
-function from_candid_vec_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_FileMetadata>): Array<FileMetadata> {
-    return value.map((x)=>from_candid_FileMetadata_n11(_uploadFile, _downloadFile, x));
+function from_candid_vec_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_FileMetadata>): Array<FileMetadata> {
+    return value.map((x)=>from_candid_FileMetadata_n13(_uploadFile, _downloadFile, x));
 }
-async function to_candid_ExternalBlob_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
+async function to_candid_ExternalBlob_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ExternalBlob): Promise<_ExternalBlob> {
     return await _uploadFile(value);
 }
-function to_candid_FileCategory_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: FileCategory): _FileCategory {
-    return to_candid_variant_n22(_uploadFile, _downloadFile, value);
+function to_candid_FileCategory_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: FileCategory): _FileCategory {
+    return to_candid_variant_n24(_uploadFile, _downloadFile, value);
 }
-function to_candid_ListFilesRequest_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ListFilesRequest): _ListFilesRequest {
-    return to_candid_record_n16(_uploadFile, _downloadFile, value);
+function to_candid_ListFilesRequest_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: ListFilesRequest): _ListFilesRequest {
+    return to_candid_record_n18(_uploadFile, _downloadFile, value);
 }
-function to_candid_SortField_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortField): _SortField {
-    return to_candid_variant_n18(_uploadFile, _downloadFile, value);
-}
-function to_candid_SortOrder_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortOrder): _SortOrder {
+function to_candid_SortField_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortField): _SortField {
     return to_candid_variant_n20(_uploadFile, _downloadFile, value);
+}
+function to_candid_SortOrder_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortOrder): _SortOrder {
+    return to_candid_variant_n22(_uploadFile, _downloadFile, value);
 }
 function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation): __ImmutableObjectStorageRefillInformation {
     return to_candid_record_n3(_uploadFile, _downloadFile, value);
@@ -511,7 +532,7 @@ function to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile: (fil
 function to_candid_opt_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _ImmutableObjectStorageRefillInformation | null): [] | [__ImmutableObjectStorageRefillInformation] {
     return value === null ? candid_none() : candid_some(to_candid__ImmutableObjectStorageRefillInformation_n2(_uploadFile, _downloadFile, value));
 }
-function to_candid_record_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function to_candid_record_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     sortField: SortField;
     sortOrder: SortOrder;
     page: bigint;
@@ -527,11 +548,11 @@ function to_candid_record_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8
     searchQuery: [] | [string];
 } {
     return {
-        sortField: to_candid_SortField_n17(_uploadFile, _downloadFile, value.sortField),
-        sortOrder: to_candid_SortOrder_n19(_uploadFile, _downloadFile, value.sortOrder),
+        sortField: to_candid_SortField_n19(_uploadFile, _downloadFile, value.sortField),
+        sortOrder: to_candid_SortOrder_n21(_uploadFile, _downloadFile, value.sortOrder),
         page: value.page,
         pageSize: value.pageSize,
-        category: value.category ? candid_some(to_candid_FileCategory_n21(_uploadFile, _downloadFile, value.category)) : candid_none(),
+        category: value.category ? candid_some(to_candid_FileCategory_n23(_uploadFile, _downloadFile, value.category)) : candid_none(),
         searchQuery: value.searchQuery ? candid_some(value.searchQuery) : candid_none()
     };
 }
@@ -544,7 +565,7 @@ function to_candid_record_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8A
         proposed_top_up_amount: value.proposed_top_up_amount ? candid_some(value.proposed_top_up_amount) : candid_none()
     };
 }
-function to_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortField): {
+function to_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortField): {
     name: null;
 } | {
     fileSize: null;
@@ -559,7 +580,7 @@ function to_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint
         uploadDate: null
     } : value;
 }
-function to_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortOrder): {
+function to_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: SortOrder): {
     asc: null;
 } | {
     desc: null;
@@ -570,7 +591,7 @@ function to_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint
         desc: null
     } : value;
 }
-function to_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: FileCategory): {
+function to_candid_variant_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: FileCategory): {
     audio: null;
 } | {
     video: null;
