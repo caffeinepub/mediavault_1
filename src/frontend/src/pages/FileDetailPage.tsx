@@ -266,7 +266,7 @@ export function FileDetailPage({ fileId, onBack }: FileDetailPageProps) {
                 fileId={file.id}
                 mimeType={file.mimeType}
                 fileName={file.name}
-                className="w-full max-h-[55vh] min-h-[220px]"
+                className="w-full min-h-[220px]"
               />
             </div>
 

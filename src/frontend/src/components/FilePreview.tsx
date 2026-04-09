@@ -34,7 +34,7 @@ export function FilePreview({
   if (isImageFile(mimeType, fileName)) {
     return (
       <div
-        className={`relative flex items-center justify-center bg-muted/40 rounded-lg overflow-hidden ${className}`}
+        className={`relative flex items-center justify-center bg-muted/40 rounded-lg ${className}`}
         data-ocid="file-preview-image"
       >
         {isLoading || !blobUrl ? (
@@ -45,7 +45,7 @@ export function FilePreview({
           <img
             src={blobUrl}
             alt={fileName}
-            className="max-w-full max-h-full object-contain touch-manipulation select-none"
+            className="w-full h-auto object-contain rounded-lg touch-manipulation select-none"
             style={{ touchAction: "pinch-zoom" }}
             draggable={false}
           />
@@ -57,7 +57,7 @@ export function FilePreview({
   if (isVideoFile(mimeType, fileName)) {
     return (
       <div
-        className={`relative flex items-center justify-center bg-muted/60 rounded-lg overflow-hidden ${className}`}
+        className={`relative flex items-center justify-center bg-muted/60 rounded-lg ${className}`}
         data-ocid="file-preview-video"
       >
         {isLoading || !blobUrl ? (

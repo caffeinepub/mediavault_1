@@ -50,6 +50,7 @@ import {
   SortOrder,
   createActor,
 } from "../backend";
+import { useFileBlob } from "../hooks/useFileBlob";
 import type { FileMetadata, ListFilesRequest } from "../types";
 import type { UploadingFile } from "../types";
 import {
@@ -600,6 +601,12 @@ function FileCard({
   const showImage = isImageFile(file.mimeType, file.name);
   const showVideo = isVideoFile(file.mimeType, file.name);
 
+  // Load image thumbnail via blob URL (correct approach using useFileBlob)
+  const { blobUrl: thumbnailUrl, isLoading: thumbLoading } = useFileBlob(
+    showImage ? file.id : null,
+    file.mimeType,
+  );
+
   const categoryColor: Record<FileCategory, string> = {
     [FileCategory.image]: "bg-chart-3/10 text-chart-3",
     [FileCategory.video]: "bg-primary/10 text-primary",
@@ -622,14 +629,21 @@ function FileCard({
         {/* Thumbnail */}
         <div className="relative h-28 bg-muted flex items-center justify-center overflow-hidden">
           {showImage ? (
-            <img
-              src={`https://storage.ic0.app/${file.id}`}
-              alt={file.name}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-              }}
-            />
+            thumbLoading ? (
+              <Skeleton className="w-full h-full absolute inset-0 rounded-none" />
+            ) : thumbnailUrl ? (
+              <img
+                src={thumbnailUrl}
+                alt={file.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${categoryColor[file.category] ?? "bg-muted text-muted-foreground"}`}
+              >
+                <Icon className="w-6 h-6" />
+              </div>
+            )
           ) : showVideo ? (
             <div className="w-full h-full bg-muted flex items-center justify-center">
               <Icon className="w-8 h-8 text-muted-foreground" />
